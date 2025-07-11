@@ -170,7 +170,7 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         if self.render_mode == "human":
             self.render()
 
-        cost = float(np.abs(x) > self.x_constraint)
+        cost = float(np.abs(x) < self.x_constraint) * 3
 
         return (
             np.array(self.state, dtype=np.float32),
@@ -323,4 +323,3 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
             pygame.display.quit()
             pygame.quit()
             self.isopen = False
-
