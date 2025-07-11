@@ -83,7 +83,7 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         self.theta_threshold_radians = 12 * 2 * math.pi / 360
         self.x_threshold = 2.4
 
-        self.x_constraint = 0.25
+        self.x_constraint = 0.5
 
         # Angle limit set to 2 * theta_threshold_radians so failing observation
         # is still within bounds.
@@ -170,7 +170,7 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         if self.render_mode == "human":
             self.render()
 
-        cost = float(np.abs(x) < self.x_constraint) * 3
+        cost = float(np.abs(x) > self.x_constraint)
 
         return (
             np.array(self.state, dtype=np.float32),
