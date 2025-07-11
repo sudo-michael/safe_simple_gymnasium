@@ -83,7 +83,7 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         self.theta_threshold_radians = 12 * 2 * math.pi / 360
         self.x_threshold = 2.4
 
-        self.x_constraint = 0.5
+        self.x_constraint = 0.25
 
         # Angle limit set to 2 * theta_threshold_radians so failing observation
         # is still within bounds.
@@ -174,10 +174,10 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
 
         return (
             np.array(self.state, dtype=np.float32),
-            cost,
+            reward,
             terminated,
             False,
-            {"cost": reward},
+            {"cost": cost},
         )
 
     def reset(
