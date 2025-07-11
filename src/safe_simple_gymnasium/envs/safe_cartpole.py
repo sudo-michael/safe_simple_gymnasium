@@ -174,10 +174,10 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
 
         return (
             np.array(self.state, dtype=np.float32),
-            reward,
+            cost,
             terminated,
             False,
-            {"cost": cost},
+            {"cost": reward},
         )
 
     def reset(
