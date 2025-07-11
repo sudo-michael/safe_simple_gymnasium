@@ -3,6 +3,7 @@ Classic cart-pole system implemented by Rich Sutton et al.
 Copied from http://incompleteideas.net/sutton/book/code/pole.c
 permalink: https://perma.cc/C9ZM-652R
 """
+
 import math
 from typing import Optional, Union
 
@@ -82,8 +83,7 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         self.theta_threshold_radians = 12 * 2 * math.pi / 360
         self.x_threshold = 2.4
 
-        self.x_constraint = 0.5
-
+        self.x_constraint = 0.25
 
         # Angle limit set to 2 * theta_threshold_radians so failing observation
         # is still within bounds.
@@ -170,9 +170,15 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         if self.render_mode == "human":
             self.render()
 
-        cost = float(np.abs(x) < self.x_constraint)
+        cost = float(np.abs(x) > self.x_constraint)
 
-        return np.array(self.state, dtype=np.float32), reward, terminated, False, {'cost': cost}
+        return (
+            np.array(self.state, dtype=np.float32),
+            reward,
+            terminated,
+            False,
+            {"cost": cost},
+        )
 
     def reset(
         self,
@@ -184,7 +190,9 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         # Note that if you use custom reset bounds, it may lead to out-of-bound
         # state/observations.
         low, high = utils.maybe_parse_reset_bounds(
-            options, -0.05, 0.05  # default low
+            options,
+            -0.05,
+            0.05,  # default low
         )  # default high
         self.state = self.np_random.uniform(low=low, high=high, size=(4,))
         self.steps_beyond_terminated = None
@@ -279,9 +287,22 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
 
         gfxdraw.hline(self.surf, 0, self.screen_width, carty, (0, 0, 0))
         # left and right constraint boundaries
-        gfxdraw.line(self.surf, int(-self.x_constraint*scale + self.screen_width/2.), carty-100, int(-self.x_constraint*scale + self.screen_width/2.), carty+1000, (1, 0, 0))
-        gfxdraw.line(self.surf, int(self.x_constraint*scale + self.screen_width/2.), carty-100, int(self.x_constraint*scale + self.screen_width/2.), carty+1000, (1, 0, 0))
-
+        gfxdraw.line(
+            self.surf,
+            int(-self.x_constraint * scale + self.screen_width / 2.0),
+            carty - 100,
+            int(-self.x_constraint * scale + self.screen_width / 2.0),
+            carty + 1000,
+            (1, 0, 0),
+        )
+        gfxdraw.line(
+            self.surf,
+            int(self.x_constraint * scale + self.screen_width / 2.0),
+            carty - 100,
+            int(self.x_constraint * scale + self.screen_width / 2.0),
+            carty + 1000,
+            (1, 0, 0),
+        )
 
         self.surf = pygame.transform.flip(self.surf, False, True)
         self.screen.blit(self.surf, (0, 0))
@@ -302,3 +323,4 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
             pygame.display.quit()
             pygame.quit()
             self.isopen = False
+
