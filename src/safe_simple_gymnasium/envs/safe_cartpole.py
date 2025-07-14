@@ -168,7 +168,7 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         if self.render_mode == "human":
             self.render()
 
-        cost = (-2.4 <= x <= -2.2) or (-1.3 <= x <= 1.1) or (-0.1 <= x <= 0.1) or (2.2 <= x <= 2.4)
+        cost = 1.0 - ((-2.4 <= x <= -2.2) or (-1.3 <= x <= 1.1) or (-0.1 <= x <= 0.1) or (2.2 <= x <= 2.4))
 
         return (
             np.array(self.state, dtype=np.float32),
