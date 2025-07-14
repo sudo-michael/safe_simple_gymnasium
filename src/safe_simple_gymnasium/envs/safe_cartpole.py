@@ -174,7 +174,6 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
             or (1.1 <= x <= 1.3)
             or (2.2 <= x <= 2.4)
         )
-        print(f"{x=}, {cost=}")
 
         return (
             np.array(self.state, dtype=np.float32),
