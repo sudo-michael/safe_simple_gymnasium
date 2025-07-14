@@ -168,7 +168,13 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         if self.render_mode == "human":
             self.render()
 
-        cost = 1.0 - ((-2.4 <= x <= -2.2) or (-1.3 <= x <= 1.1) or (-0.1 <= x <= 0.1) or (2.2 <= x <= 2.4))
+        cost = 1.0 - (
+            (-2.4 <= x <= -2.2)
+            or (-1.3 <= x <= 1.1)
+            or (1.1 <= x <= 1.3)
+            or (2.2 <= x <= 2.4)
+        )
+        print(f"{x=}, {cost=}")
 
         return (
             np.array(self.state, dtype=np.float32),
@@ -193,6 +199,7 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
             0.05,  # default low
         )  # default high
         self.state = self.np_random.uniform(low=low, high=high, size=(4,))
+        self.state[0] = -1.4
         self.steps_beyond_terminated = None
 
         if self.render_mode == "human":
@@ -285,7 +292,7 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
 
         gfxdraw.hline(self.surf, 0, self.screen_width, carty, (0, 0, 0))
         # left and right constraint boundaries
-        for x, y in [(-2.4, -2.2), (-1.3, -1.1), (-0.1, 0.1), (1.1, 1.3), (2.2, 2.4)]:
+        for x, y in [(-2.4, -2.2), (-1.3, -1.1), (1.1, 1.3), (2.2, 2.4)]:
             gfxdraw.line(
                 self.surf,
                 int(x * scale + self.screen_width / 2.0),
