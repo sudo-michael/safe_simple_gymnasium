@@ -83,8 +83,6 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         self.theta_threshold_radians = 12 * 2 * math.pi / 360
         self.x_threshold = 2.4
 
-        self.x_constraint = 0.25
-
         # Angle limit set to 2 * theta_threshold_radians so failing observation
         # is still within bounds.
         high = np.array(
@@ -170,7 +168,7 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         if self.render_mode == "human":
             self.render()
 
-        cost = float(np.abs(x) < self.x_constraint)
+        cost = (-2.4 <= x <= -2.2) or (-1.3 <= x <= 1.1) or (-0.1 x <= 0.1) or (2.2 <= x <= 2.4)
 
         return (
             np.array(self.state, dtype=np.float32),
@@ -287,22 +285,23 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
 
         gfxdraw.hline(self.surf, 0, self.screen_width, carty, (0, 0, 0))
         # left and right constraint boundaries
-        gfxdraw.line(
-            self.surf,
-            int(-self.x_constraint * scale + self.screen_width / 2.0),
-            carty - 100,
-            int(-self.x_constraint * scale + self.screen_width / 2.0),
-            carty + 1000,
-            (1, 0, 0),
-        )
-        gfxdraw.line(
-            self.surf,
-            int(self.x_constraint * scale + self.screen_width / 2.0),
-            carty - 100,
-            int(self.x_constraint * scale + self.screen_width / 2.0),
-            carty + 1000,
-            (1, 0, 0),
-        )
+        for x, y in [(-2.4, -2.2), (-1.3, -1.1), (-0.1, 0.1), (1.1, 1.3), (2.2, 2.4)]:
+            gfxdraw.line(
+                self.surf,
+                int(x * scale + self.screen_width / 2.0),
+                carty - 100,
+                int(x * scale + self.screen_width / 2.0),
+                carty + 1000,
+                (1, 0, 0),
+            )
+            gfxdraw.line(
+                self.surf,
+                int(y * scale + self.screen_width / 2.0),
+                carty - 100,
+                int(y * scale + self.screen_width / 2.0),
+                carty + 1000,
+                (1, 0, 0),
+            )
 
         self.surf = pygame.transform.flip(self.surf, False, True)
         self.screen.blit(self.surf, (0, 0))
