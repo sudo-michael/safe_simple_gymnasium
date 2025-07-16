@@ -68,7 +68,7 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         "render_fps": 50,
     }
 
-    def __init__(self, render_mode: Optional[str] = None):
+    def __init__(self, render_mode: Optional[str] = None, zero_cost_zone="arushi"):
         self.gravity = 9.8
         self.masscart = 1.0
         self.masspole = 0.1
@@ -108,6 +108,21 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         self.state = None
 
         self.steps_beyond_terminated = None
+
+        if zero_cost_zone == "arushi":
+            self.zero_cost_zones = [(-2.4, -2.2), (-1.3, -1.1), (1.1, 1.3), (2.2, 2.4)]
+        elif zero_cost_zone == "arushi-modify":
+            self.zero_cost_zones = [
+                (-2.4, -2.2),
+                (-1.3, -1.1),
+                (-0.1, 0.1),
+                (1.1, 1.3),
+                (2.2, 2.4),
+            ]
+        elif zero_cost_zone == "far-right-side":
+            self.zero_cost_zones = [(1.1, 2.4)]
+        elif zero_cost_zone == "right-side":
+            self.zero_cost_zones = [(0.0, 2.4)]
 
     def step(self, action):
         err_msg = f"{action!r} ({type(action)}) invalid"
@@ -168,13 +183,11 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         if self.render_mode == "human":
             self.render()
 
-        cost = 1.0 - (
-            (-2.4 <= x <= -2.2)
-            or (-1.3 <= x <= 1.1)
-            or (1.1 <= x <= 1.3)
-            or (2.2 <= x <= 2.4)
-        )
-
+        cost = 1.0
+        for lb, ub in self.zero_cost_zones:
+            if lb <= x <= ub:
+                cost = 0.0
+                break
         return (
             np.array(self.state, dtype=np.float32),
             reward,
@@ -291,7 +304,7 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
 
         gfxdraw.hline(self.surf, 0, self.screen_width, carty, (0, 0, 0))
         # left and right constraint boundaries
-        for x, y in [(-2.4, -2.2), (-1.3, -1.1), (1.1, 1.3), (2.2, 2.4)]:
+        for x, y in self.zero_cost_zones:
             gfxdraw.line(
                 self.surf,
                 int(x * scale + self.screen_width / 2.0),
