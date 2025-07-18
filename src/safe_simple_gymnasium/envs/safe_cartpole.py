@@ -211,7 +211,6 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
             0.05,  # default low
         )  # default high
         self.state = self.np_random.uniform(low=low, high=high, size=(4,))
-        self.state[0] = -1.4
         self.steps_beyond_terminated = None
 
         if self.render_mode == "human":
