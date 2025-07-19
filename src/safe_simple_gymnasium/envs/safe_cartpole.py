@@ -113,11 +113,7 @@ class SafeCartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
             self.zero_cost_zones = [(-2.4, -2.2), (-1.3, -1.1), (1.1, 1.3), (2.2, 2.4)]
         elif zero_cost_zone == "arushi-modify":
             self.zero_cost_zones = [
-                (-2.4, -2.2),
-                (-1.3, -1.1),
-                (-0.1, 0.1),
-                (1.1, 1.3),
-                (2.2, 2.4),
+                (-1.1, 1.1),
             ]
         elif zero_cost_zone == "far-right-side":
             self.zero_cost_zones = [(1.1, 2.4)]
