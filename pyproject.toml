@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [
     { name = "Michael Lu", email = "lu.michael@outlook.com" }
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 dependencies = [
     "gymnasium[classic-control]==0.28.1",
 ]
